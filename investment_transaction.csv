@@ -1,0 +1,11 @@
+TransactionID,CustomerID,CustomerName,Date,InvestmentType,AssetName,Amount,Region
+T001,C001,Alice,2023-01-10,Equity,Apple,10000,North
+T002,C002,Bob,2023-01-12,Bond,TreasuryBond,5000,South
+T003,C001,Alice,2023-02-15,MutualFund,IndexFund,7000,North
+T004,C003,David,2023-02-28,Equity,Google,15000,West
+T005,C004,Eva,2023-03-02,Equity,Microsoft,12000,East
+T006,C001,Alice,2023-03-20,Bond,CorporateBond,4000,North
+T007,C002,Bob,2023-04-05,MutualFund,ESGFund,8000,South
+T008,C003,David,2023-04-15,Equity,Amazon,10000,West
+T009,C005,Frank,2023-04-20,Bond,MunicipalBond,3000,South
+T010,C004,Eva,2023-04-25,MutualFund,EmergingMarkets,6000,East
