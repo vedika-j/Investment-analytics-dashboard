@@ -1,0 +1,59 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Load your CSV
+df = pd.read_csv("monthly_investment.csv")
+df_full = pd.read_csv("investment_transaction.csv")
+
+
+# Convert Month to datetime for better plotting
+df['Month'] = pd.to_datetime(df['Month'])
+
+# Set plot style
+sns.set_style("whitegrid")
+
+# Line plot for Monthly Investment
+plt.figure(figsize=(10, 5))
+sns.lineplot(x='Month', y='MonthlyInvestment', data=df, marker='o', label='Monthly Investment')
+sns.lineplot(x='Month', y='RunningTotal', data=df, marker='s', label='Running Total')
+
+# Formatting
+plt.title("Monthly and Cumulative Investment Over Time")
+plt.xlabel("Month")
+plt.ylabel("Amount (INR)")
+plt.legend()
+plt.tight_layout()
+plt.show()
+
+# Group by Investment Type
+type_df = df_full.groupby('InvestmentType')['Amount'].sum().reset_index()
+
+# Pie chart
+plt.figure(figsize=(6,6))
+plt.pie(type_df['Amount'], labels=type_df['InvestmentType'], autopct='%1.1f%%', startangle=140)
+plt.title("Investment Distribution by Type")
+plt.tight_layout()
+plt.show()
+
+# Group by Region
+region_df = df_full.groupby('Region')['Amount'].sum().reset_index()
+
+# Bar plot
+plt.figure(figsize=(8,5))
+sns.barplot(x='Region', y='Amount', data=region_df, palette='viridis')
+plt.title("Total Investment by Region")
+plt.ylabel("Amount (INR)")
+plt.tight_layout()
+plt.show()
+
+# Group by Customer
+top_customers = df_full.groupby('CustomerName')['Amount'].sum().sort_values(ascending=False).head(3).reset_index()
+
+# Bar chart
+plt.figure(figsize=(6,4))
+sns.barplot(x='CustomerName', y='Amount', data=top_customers, palette='magma')
+plt.title("Top 3 Investors")
+plt.ylabel("Total Invested")
+plt.tight_layout()
+plt.show()
