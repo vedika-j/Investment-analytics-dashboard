@@ -1,0 +1,80 @@
+CREATE DATABASE investment;
+USE investment;
+
+
+CREATE TABLE investment_transactions (
+    TransactionID VARCHAR(10) PRIMARY KEY,
+    CustomerID VARCHAR(10),
+    CustomerName VARCHAR(50),
+    `Date` DATE,
+    InvestmentType VARCHAR(30),
+    AssetName VARCHAR(50),
+    Amount INT,
+    Region VARCHAR(20)
+);
+
+INSERT INTO investment_transactions VALUES
+('T001','C001','Alice','2023-01-10','Equity','Apple',10000,'North'),
+('T002','C002','Bob','2023-01-12','Bond','TreasuryBond',5000,'South'),
+('T003','C001','Alice','2023-02-15','MutualFund','IndexFund',7000,'North'),
+('T004','C003','David','2023-02-28','Equity','Google',15000,'West'),
+('T005','C004','Eva','2023-03-02','Equity','Microsoft',12000,'East'),
+('T006','C001','Alice','2023-03-20','Bond','CorporateBond',4000,'North'),
+('T007','C002','Bob','2023-04-05','MutualFund','ESGFund',8000,'South'),
+('T008','C003','David','2023-04-15','Equity','Amazon',10000,'West'),
+('T009','C005','Frank','2023-04-20','Bond','MunicipalBond',3000,'South'),
+('T010','C004','Eva','2023-04-25','MutualFund','EmergingMarkets',6000,'East');
+
+SELECT * FROM investment_transactions;
+
+-- Total invesment by each customer --> "Which clients bring the most value to our portfolio? Who are our top investors?"
+SELECT CustomerName, SUM(Amount) AS TotalInvestment
+FROM investment_transactions
+GROUP BY CustomerName
+ORDER BY TotalInvestment DESC;
+
+-- Asset Allocation Breakdown by Investment Type --> "How is our total AUM (Assets Under Management) diversified across different instruments?"
+SELECT InvestmentType, SUM(Amount) AS TotalAmount
+FROM investment_transactions
+GROUP BY InvestmentType
+ORDER BY TotalAmount DESC;
+
+-- Monthly Investment Trend (2023) --> How does investment activity trend month-to-month? Are there seasonal spikes?"
+SELECT MONTH(`Date`) AS Month, SUM(Amount) AS MonthlyInvestment
+FROM investment_transactions
+GROUP BY MONTH(`Date`)
+ORDER BY Month;
+
+-- Most Popular Asset (by Amount Invested) --> Which specific asset attracted the most investment?"
+SELECT AssetName, SUM(Amount) AS TotalAmount
+FROM investment_transactions
+GROUP BY AssetName
+ORDER BY TotalAmount DESC
+LIMIT 1;
+
+-- Regional Investment Distribution --> "Which region is driving the most investment? Can we allocate resources or marketing accordingly?"
+SELECT Region, SUM(Amount) AS TotalInvestment
+FROM investment_transactions
+GROUP BY Region
+ORDER BY TotalInvestment DESC;
+
+-- Unique Customer Count per Investment Type --> "Which investment categories appeal to the broadest customer base?"
+SELECT InvestmentType, COUNT(DISTINCT CustomerID) AS UniqueCustomers
+FROM investment_transactions
+GROUP BY InvestmentType;
+
+-- Rank Customers by Total Investment (Over All Time)
+SELECT 
+    CustomerName,
+    SUM(Amount) AS TotalInvestment,
+    RANK() OVER (ORDER BY SUM(Amount) DESC) AS InvestmentRank
+FROM investment_transactions
+GROUP BY CustomerName;
+
+-- Running Total of Investments by Month --> “How much has been invested up to and including each month?”
+SELECT 
+    DATE_FORMAT(Date, '%Y-%m') AS Month,
+    SUM(Amount) AS MonthlyInvestment,
+    SUM(SUM(Amount)) OVER (ORDER BY DATE_FORMAT(Date, '%Y-%m')) AS RunningTotal
+FROM investment_transactions
+GROUP BY DATE_FORMAT(Date, '%Y-%m');
